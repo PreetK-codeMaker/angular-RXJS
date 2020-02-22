@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { of, from } from 'rxjs';
+import {map,tap, take} from 'rxjs/operators';
 
 @Component({
   selector: 'my-app',
@@ -11,13 +12,39 @@ export class AppComponent implements OnInit {
   ngOnInit () {
     //type of the obseervable. of <=(send one at time.)and from <= is for array if the static no object.
     of(2,4,8).subscribe(console.log);
-    from([20,5,10,5]).subscribe(
+
+
+    // from([20,5,10,5]).subscribe(
+    //   item => console.log(`resulting item' ${item}`),
+    //   err => console.log(`error occurres ${err}`),
+    //   () => console.log('Console Comapleeme')
+    // );
+    // `` <= this back for the template 
+    //-------------With pipe or map
+       from([20,15,10,5]).pipe(
+         tap(item => console.log(`Emitted Item....${item}`)),
+        map(item => item *2),
+        map(item => item -10), //<= on line have implied return but a multi line one
+        map(item => {//<= this one needs a return.
+          if(item === 0){
+            throw new Error('zer');
+          }
+          return item;
+        }),
+        take(3)
+
+
+      ).subscribe(
       item => console.log(`resulting item' ${item}`),
       err => console.log(`error occurres ${err}`),
       () => console.log('Console Comapleeme')
     );
-    // `` <= this back for the template 
+    
   }
+
+
+
+
 }
 /**
  * map(item => uitem *2)
@@ -55,7 +82,20 @@ export class AppComponent implements OnInit {
  *     -provides a side effect operation thaty does not change the it's output value
  * 
  *  
- * -------------Take
+ * -------------Take------
+ * used for 
+ *    taking a spcfied number of streams and limiting the unlimted streams.s
+ *  for example 
+ * of (2,4,6)
+ * .pipe(
+ *  map (item => item * 2)
+ * take(2) <= this only up to number 4
+ * ).Subscribe(console.log());
+ * 
+ *  take is filtering a oerator
+ *  -takes count if it <= the output stream.
+ *  when equals to it unscbei it autmatically
+ * only emiit define number of it 
  * 
  * 
  * 
